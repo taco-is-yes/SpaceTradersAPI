@@ -1,29 +1,32 @@
 import requests
-from os import getenv
 from time import sleep
+import os
+import json
+import re
 
-TravelToOEPMS1 = {'destination': 'OE-PM', 'shipId': 'value1'}
-TravelToOEPMTRS1 = {'destination': 'OE-PM-TR', 'shipId': 'value1'}
-BuyFuelS1 = {'good': 'FUEL', 'shipId': 'value1', "quantity": 50}
-SellFuelS1 = {'good': 'FUEL', 'shipId': 'value1', "quantity": 50}
+def SellGoods(ShipId, GoodId, Amount):
+	requests.post('https://api.spacetraders.io/my/sell-orders', params={'shipId': ShipId, 'good': GoodId, 'quantity': Amount, 'token': os.getenv("TOKEN")})
 
-TravelToOEPMS2 = {'destination': 'OE-PM', 'shipId': 'value2'}
-TravelToOEPMTRS2 = {'destination': 'OE-PM-TR', 'shipId': 'value2'}
-BuyFuelS2 = {'good': 'FUEL', 'shipId': 'value2', "quantity": 100}
-SellFuelS2 = {'good': 'FUEL', 'shipId': 'value2', "quantity": 100}
+def BuyGoods(ShipId, GoodId, Amount):
+	requests.post('https://api.spacetraders.io/my/sell-orders', params={'shipId': ShipId, 'good': GoodId, 'quantity': Amount, 'token': os.getenv("TOKEN")})
+
+def FlyTo(ShipId, Destination):
+	ResJson = requests.post('https://api.spacetraders.io/my/flight-plans', params={'shipId': ShipId, 'destination': Destination, "token": os.getenv("TOKEN")}).text
+	ResJson=json.loads(ResJson)
+	try:
+		sleep(ResJson["flightPlan"]["timeRemainingInSeconds"])
+	except:
+		requests.post('https://api.spacetraders.io/my/purchase-orders', params={'shipId': ShipId, 'good': 'FUEL', 'quantity': int(re.search(r'\d+',ResJson['error']['message']).group()), 'token': os.getenv("TOKEN")})
+		FlyTo(ShipId, Destination)
 
 while True:
-	requests.get('https://api.spacetraders.io/my/flight-plans', auth=getenv("TOKEN"), params=TravelToOEPMTRS1)
-	requests.get('https://api.spacetraders.io/my/flight-plans', auth=getenv("TOKEN"), params=TravelToOEPMTRS2)
-	sleep(33)
-	requests.get('https://api.spacetraders.io/my/purchase-orders', auth=getenv("TOKEN"), params=BuyFuelS1)
-	requests.get('https://api.spacetraders.io/my/purchase-orders', auth=getenv("TOKEN"), params=BuyFuelS2)
+	BuyGoods("clag1cyu459697816s6koq9kcme", "FUEL", 2)
+	FlyTo("clag1cyu459697816s6koq9kcme", "OE-PM-TR")
+	print("Traveled")
+	BuyGoods("clag1cyu459697816s6koq9kcme", "METALS", 99)
+	BuyGoods("clag1cyu459697816s6koq9kcme", "FUEL", 1)
 	print("Bought")
-	#buy
-	requests.get('https://api.spacetraders.io/my/flight-plans', auth=getenv("TOKEN"), params=TravelToOEPMS1)
-	requests.get('https://api.spacetraders.io/my/flight-plans', auth=getenv("TOKEN"), params=TravelToOEPMS2)
-	sleep(33)
-	requests.get('https://api.spacetraders.io/my/flight-plans', auth=getenv("TOKEN"), params=TravelToOEPMTRS1)
-	requests.get('https://api.spacetraders.io/my/flight-plans', auth=getenv("TOKEN"), params=TravelToOEPMTRS2)
+	FlyTo("clag1cyu459697816s6koq9kcme", "OE-PM")
+	print("Traveled")
+	SellGoods("clag1cyu459697816s6koq9kcme", "METALS", 98)
 	print("Sold")
-	#sell22
