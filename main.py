@@ -25,8 +25,7 @@ def FlyTo(ShipId, Destination):
 while True:
 	HighestProfitItem = GetHighestProfitItem()
 	print(HighestProfitItem)
-	FlyTo("clag1cyu459697816s6koq9kcme", HighestProfitItem[2])
-	BuyGoods("clag1cyu459697816s6koq9kcme", HighestProfitItem[0], (100-20)/HighestProfitItem[4])
-	FlyTo("clag1cyu459697816s6koq9kcme",  HighestProfitItem[3])
-	SellGoods("clag1cyu459697816s6koq9kcme", HighestProfitItem[0], (100-20)/HighestProfitItem[4])
-	requests.post('https://api.spacetraders.io/my/ships/clag1cyu459697816s6koq9kcme/jettison', params={'good': 'FUEL', 'quantity': 1, 'token': os.getenv("TOKEN")})
+	FlyTo("clahenpzw14448415s6z4b5pmyv", HighestProfitItem[2])
+	BuyGoods("clahenpzw14448415s6z4b5pmyv", HighestProfitItem[0], 240)
+	FlyTo("clahenpzw14448415s6z4b5pmyv",  HighestProfitItem[3])
+	SellGoods("clahenpzw14448415s6z4b5pmyv", HighestProfitItem[0], 240)
